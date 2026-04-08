@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { CartLineItem } from "./cart";
+import type { ProductListItem } from "./ecommerce";
 
 export interface FinalContextValue {
   NavCartNo: number;
@@ -10,4 +11,8 @@ export interface FinalContextValue {
   setProdects: Dispatch<SetStateAction<CartLineItem[]>>;
   cartUser: string;
   setcartUser: Dispatch<SetStateAction<string>>;
+  NavWishNo: number;
+  setNavWishNo: Dispatch<SetStateAction<number>>;
+  Wishprodect: ProductListItem[];
+  setWishProdects: Dispatch<SetStateAction<ProductListItem[]>>;
 }

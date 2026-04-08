@@ -1,9 +1,10 @@
 "use client";
-import React, { createContext, type ReactNode, useState } from "react";
+import React, { createContext, type ReactNode, useEffect, useState } from "react";
 import {
   normalizeAddToCartResponse,
   type AddToCartResponse,
   type FinalContextValue,
+  type ProductListItem,
 } from "@/types";
 
 const defaultContextValue: FinalContextValue = {
@@ -15,6 +16,10 @@ const defaultContextValue: FinalContextValue = {
   setProdects: () => {},
   cartUser: "",
   setcartUser: () => {},
+  NavWishNo: 0,
+  setNavWishNo: () => {},
+  Wishprodect: [],
+  setWishProdects: () => {},
 };
 
 export const finalContext =
@@ -27,6 +32,7 @@ export default function Ncontext({
 }: {
   children: ReactNode;
   userCart: AddToCartResponse;
+  userWishlist: { count: number; data: ProductListItem[] };
 }) {
   const cart = normalizeAddToCartResponse(userCart);
 
@@ -40,6 +46,18 @@ export default function Ncontext({
   const [NavWishNo, setNavWishNo] = useState(userWishlist.count);
   const [Wishprodect, setWishProdects] = useState(userWishlist.data);
 
+  useEffect(() => {
+    const nextCart = normalizeAddToCartResponse(userCart);
+    setNavCartNo(nextCart.numOfCartItems);
+    setcartUser(userCart.cartId);
+    settotalCartPrice(nextCart.data.totalCartPrice);
+    setProdects(nextCart.data.products);
+  }, [userCart]);
+
+  useEffect(() => {
+    setNavWishNo(userWishlist.count);
+    setWishProdects(userWishlist.data);
+  }, [userWishlist]);
 
 
 

@@ -1,97 +1,174 @@
 "use client"
-import CallGetLoggedUserWishlistApi from '@/CallAPIs/CallGetLoggedUserWishlistApi';
-import Link from 'next/link'
-import { FaShoppingCart } from 'react-icons/fa';
-import { FaHeart, FaTrash } from 'react-icons/fa6'
-import AddProductTocardButton from '../_components/AddProductTocardButton';
-import CallDeleteWhishlistAPI from '@/CallAPIs/CallDeleteWhishlistAPI';
-import DeleteWishlistButton from '../_components/DeleteWishlistButton';
-import { useContext } from 'react';
-import { finalContext } from '../_contexts/Ncontext';
+import CallDeleteWhishlistAPI from "@/CallAPIs/CallDeleteWhishlistAPI";
+import type { ProductListItem } from "@/types";
+import { Heart, LoaderCircle, ShoppingBag, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
+import { toast } from "sonner";
+import AddProductTocardButton from "../_components/AddProductTocardButton";
+import { finalContext } from "../_contexts/Ncontext";
 
-export default function page() {
+export default function Page() {
+  const { setNavWishNo, setWishProdects, Wishprodect } = useContext(finalContext);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const router = useRouter();
 
+  const wishlistCount = Wishprodect.length;
 
-const {setNavWishNo , setWishProdects ,Wishprodect} =  useContext(finalContext)
-    async function handleDelete(id:string)
-    {
-        const response = await CallDeleteWhishlistAPI(id)
-        setNavWishNo(response.data.length)
-        console.log("responsedddd",response);
-        setWishProdects(response.data)
+  async function handleDelete(id: string) {
+    try {
+      setDeletingId(id);
+      setWishProdects((current) => current.filter((product) => product.id !== id));
+      setNavWishNo((current) => Math.max(0, current - 1));
+      await CallDeleteWhishlistAPI(id);
+      toast.success("Item removed from wishlist.", {
+        richColors: true,
+        position: "top-center",
+      });
+      router.refresh();
+    } catch {
+      toast.error("Unable to remove this item right now.", {
+        richColors: true,
+        position: "top-center",
+      });
+      router.refresh();
+    } finally {
+      setDeletingId(null);
     }
+  }
 
+  return (
+    <section className="bg-[#fcfdfb] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8">
+        <div className="flex flex-col gap-6 rounded-[28px] border border-[#eef2ec] bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-2 text-sm font-medium text-[#6A7282] sm:flex-row sm:items-center">
+            <Link className="transition hover:text-[#16A34A]" href="/home">
+              Home
+            </Link>
+            <span className="hidden sm:inline">/</span>
+            <span className="text-[#101828]">Wishlist</span>
+          </div>
 
-
-
-
-    return (
-        <>
-            <div className='w-full flex justify-center my-5 px-10 flex-col gap-5'>
-                <div className='flex  gap-1'>
-                    <Link className=' opacity-50 hover:opacity-100 text-[14px] font-medium' href={"/home"}>Home </Link>
-                    <p className='font-medium text-[14px]'> / wishlist</p>
-                </div>
-                <div className='flex justify-between items-center'>
-
-                    <div className='flex items-center gap-3'>
-                        <div className='text-red-500 bg-[#FEF2F2] w-14 h-14 flex items-center justify-center rounded-xl'>
-
-                            <FaHeart className='w-[31.52783203125px] h-[24.84450912475586px]' />
-
-                        </div>
-                        <div>
-                            <p className='text-[30px] font-bold text-[#101828]'>My Wishlist</p>
-                            <p className='text-[14px] font-medium text-[#6A7282]'>5 items saved</p>
-
-                        </div>
-                    </div>
-
-                    <Link className='text-red-500 text-[14px] font-medium' href={"/home"}>Continue Shopping </Link>
-                </div>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FEF2F2] text-red-500">
+                <Heart className="h-7 w-7 fill-current" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight text-[#101828]">
+                  My Wishlist
+                </h1>
+                <p className="text-sm font-medium text-[#6A7282] sm:text-base">
+                  {wishlistCount} {wishlistCount === 1 ? "item" : "items"} saved for later.
+                </p>
+              </div>
             </div>
 
+            <Link
+              className="inline-flex w-full items-center justify-center rounded-xl border border-[#fecaca] px-4 py-3 text-sm font-semibold text-red-500 transition hover:bg-[#fff5f5] sm:w-auto"
+              href="/shop"
+            >
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
 
-            <div className=' my-5 px-10 '>
-                <div className="max-w-7xl mx-auto px-4 py-6">
-                    <div className="overflow-x-auto border rounded-2xl">
-                        <table className="w-full table-auto text-sm">
-                            <thead>
-                                <tr className="border-b bg-gray-100">
-                                    <th className="text-left px-4 py-2">Product</th>
-                                    <th className="text-left px-4 py-2">Price</th>
-                                    <th className="text-left px-4 py-2">Status</th>
-                                    <th className="text-center px-4 py-2">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Wishprodect.map((product, index) => (
-                                    <tr key={index} className="border-b hover:bg-gray-50 transition-all">
-                                        <td className="px-4 py-3 flex items-center gap-3">
-                                            <img src={product.imageCover} alt={product.title} className="w-12 h-12 rounded-md object-cover" />
-                                            <span>{product.title}</span>
-                                        </td>
-                                        <td className="px-4 py-3">{product.price} EGP</td>
-                                        <td className="px-4 py-3">
-                                            <span className="text-green-700 bg-[#F0FDF4] rounded-xl px-2">in stock</span>
-                                        </td>
-                                        <td className="px-4 py-3 flex justify-end gap-3">
-                                            <AddProductTocardButton id={product.id} />
-                                            <button onClick={()=>handleDelete(product.id)} className="text-red-600 cursor-pointer hover:text-red-800">
-                                                                                            <FaTrash size={20} />
-                                                                                        </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-
+        {wishlistCount === 0 ? (
+          <div className="rounded-[28px] border border-dashed border-[#d8e3d6] bg-white px-6 py-14 text-center shadow-sm sm:px-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#f1f8f1] text-[#16A34A]">
+              <ShoppingBag className="h-8 w-8" />
             </div>
+            <h2 className="mt-6 text-2xl font-bold text-[#101828]">
+              Your wishlist is empty
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[#6A7282] sm:text-base">
+              Save products you love so they are easy to find later. Once you are ready,
+              you can move them straight into your cart.
+            </p>
+            <Link
+              href="/shop"
+              className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#16A34A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#15803D]"
+            >
+              Discover Products
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {Wishprodect.map((product: ProductListItem) => {
+              const isDeleting = deletingId === product.id;
 
+              return (
+                <article
+                  key={product.id}
+                  className="rounded-[28px] border border-[#edf2ea] bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5"
+                >
+                  <div className="flex flex-col gap-5 md:flex-row md:items-center">
+                    <Link
+                      href={`/prodectDetails/${product.id}`}
+                      className="flex items-center gap-4"
+                    >
+                      <div className="h-24 w-24 overflow-hidden rounded-2xl bg-[#f8faf8]">
+                        <img
+                          src={product.imageCover}
+                          alt={product.title}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="inline-flex w-fit items-center rounded-full bg-[#F0FDF4] px-3 py-1 text-xs font-semibold text-[#15803D]">
+                          {product.category?.name ?? "Featured"}
+                        </div>
+                        <h2 className="max-w-xl text-lg font-semibold text-[#101828] transition hover:text-[#16A34A]">
+                          {product.title}
+                        </h2>
+                        <p className="text-sm text-[#6A7282]">
+                          Keep it saved for later or move it to your cart when you are ready.
+                        </p>
+                      </div>
+                    </Link>
 
-        </>
-    )
+                    <div className="md:ml-auto md:min-w-65">
+                      <div className="mb-4 flex items-center justify-between md:justify-end md:gap-6">
+                        <div className="text-left md:text-right">
+                          <p className="text-sm font-medium text-[#6A7282]">Price</p>
+                          <p className="text-xl font-bold text-[#101828]">
+                            {product.price} EGP
+                          </p>
+                        </div>
+                        <div className="rounded-full bg-[#F0FDF4] px-3 py-1 text-xs font-semibold text-[#15803D]">
+                          In stock
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                        <AddProductTocardButton
+                          id={product.id}
+                          label="Add to cart"
+                          className="w-full sm:w-auto"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(product.id)}
+                          disabled={isDeleting}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#fecaca] px-4 py-2.5 text-sm font-semibold text-red-500 transition hover:bg-[#fff5f5] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+                        >
+                          {isDeleting ? (
+                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                          <span>{isDeleting ? "Removing..." : "Remove"}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
