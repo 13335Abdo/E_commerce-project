@@ -1,8 +1,9 @@
 "use client"
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaMapMarkerAlt, FaCalendarAlt, FaTruck, FaBoxOpen, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
+import type { OrderLineItem, UserOrder } from '@/types';
 
-export default function UserOrders({ item }) {
+export default function UserOrders({ item }: { item: UserOrder }) {
 
     const [isVisible, setIsVisible] = useState(true);
 
@@ -54,7 +55,7 @@ export default function UserOrders({ item }) {
 
                         {isVisible && (
                             <div className="mt-5 space-y-4 animate-fadeIn">
-                                {item?.cartItems?.map((product, index) => (
+                                {item?.cartItems?.map((product: OrderLineItem, index: number) => (
                                     <div key={index} className="flex flex-wrap justify-between items-center gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
                                         <div className="flex items-center gap-3 flex-1 min-w-[200px]">
                                             <img src={product?.product?.imageCover} alt={product?.product?.title} className="w-14 h-14 rounded-xl object-cover ring-1 ring-green-100" />

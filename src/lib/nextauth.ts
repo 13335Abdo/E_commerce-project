@@ -1,5 +1,13 @@
 import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+
+interface AuthUser {
+    id: string;
+    email: string;
+    name: string;
+    token: string;
+}
+
 export const nextAuth : NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
 
@@ -26,13 +34,12 @@ export const nextAuth : NextAuthOptions = {
         console.log("values", data);
 
         if (data.message == "success") {
-            return{
+            return {
                 id: data.user.id,
                 email :data.user.email,
                 name : data.user.name,
                 token : data.token
-
-            }
+            } as AuthUser
             
         } return null
         }
@@ -42,11 +49,12 @@ export const nextAuth : NextAuthOptions = {
     callbacks: {
       jwt({ token, user }) {
         if (user) {
-          if (user.token) {
-            token.tokenFromApi = user.token;
+          const authUser = user as AuthUser;
+          if (authUser.token) {
+            token.tokenFromApi = authUser.token;
           }
-          if (user.id) {
-            token.id = user.id;
+          if (authUser.id) {
+            token.id = authUser.id;
           }
         }
         return token;

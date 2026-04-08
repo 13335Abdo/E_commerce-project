@@ -1,23 +1,28 @@
-import fun from '@/utils/fun';
-import {jwtDecode} from "jwt-decode"
+import fun from "@/utils/fun";
+import { jwtDecode } from "jwt-decode";
+
 interface JwtPayload {
-  id: string;  // أو أي نوع آخر بناءً على بياناتك
-  // بقية الخصائص إذا كانت موجودة
+  id?: string;
 }
 
 export default async function CallUserOrdersAPI() {
-  const token = await fun()
+  const token = await fun();
+
+  if (!token) {
+    return [];
+  }
+
   const { id } = jwtDecode<JwtPayload>(token);
 
-    console.log("decoded",id);
-    
+  if (!id) {
+    return [];
+  }
 
-    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/orders/user/${id}`)
-    const data = await res.json()
-    console.log("dataaaaa" , data);
-    
+  console.log("decoded", id);
 
+  const res = await fetch(`https://ecommerce.routemisr.com/api/v1/orders/user/${id}`);
+  const data = await res.json();
+  console.log("dataaaaa", data);
 
-
-  return data
+  return data;
 }

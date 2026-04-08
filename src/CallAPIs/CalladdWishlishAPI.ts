@@ -1,9 +1,11 @@
 import fun from '@/utils/fun'
 import React from 'react'
-export interface productIdType {
-    productId: string
+export interface WishlistMutationResponse {
+    status: string
+    message?: string
+    data: string[]
 }
-export default async function CalladdWishlishAPI(id: string): Promise<productIdType> {
+export default async function CalladdWishlishAPI(id: string): Promise<WishlistMutationResponse> {
 
     const token = await fun()
 

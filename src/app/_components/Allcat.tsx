@@ -3,7 +3,7 @@ import React from 'react'
 import { FaBoxOpen, FaTags } from 'react-icons/fa6'
 import { IoLayers } from 'react-icons/io5'
 
-export default function Allcat(isallorder = false) {
+export default function Allcat({ isallorder = false }: { isallorder?: boolean }) {
     return (
         <>
 

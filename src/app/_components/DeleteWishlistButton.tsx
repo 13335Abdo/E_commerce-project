@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { FaTrash } from 'react-icons/fa6'
 import { finalContext } from '../_contexts/Ncontext'
 
-export default function DeleteWishlistButton({product}) {
+export default function DeleteWishlistButton({product}: { product: string }) {
     const {setNavWishNo , setWishProdects} =  useContext(finalContext)
     const [isPending, setIsPending] = useState(false)
     const router = useRouter()

@@ -2,7 +2,7 @@
 import { decode } from 'next-auth/jwt'
 import { cookies } from 'next/headers'
 
-export default async function fun() {
+export default async function fun(): Promise<string | null> {
 
 
     const mycookies = await cookies()
@@ -18,5 +18,8 @@ export default async function fun() {
 
 
 
-    return token?.tokenFromApi
+    const tokenFromApi =
+        typeof token?.tokenFromApi === "string" ? token.tokenFromApi : null
+
+    return tokenFromApi
 }
