@@ -1,16 +1,27 @@
 import fun from '@/utils/fun';
-import React from 'react'
+import { emptyWishlistResponse, normalizeWishlistResponse, type WishlistResponse } from '@/types';
 
-export default async function CallGetLoggedUserWishlistApi() {
+export default async function CallGetLoggedUserWishlistApi(): Promise<WishlistResponse> {
     const token = await fun()
 
-    const res = await fetch("https://ecommerce.routemisr.com/api/v1/wishlist",{
-        headers:{
-            token : token as string
+    if (!token) {
+        return emptyWishlistResponse
+    }
+
+    try {
+        const res = await fetch("https://ecommerce.routemisr.com/api/v1/wishlist",{
+            headers:{
+                token
+            }
+        })
+
+        if (!res.ok) {
+            return emptyWishlistResponse
         }
-    })
-   const final = await res.json()
-   console.log("finaaaaaaaaaaaaaaaal",final);
-   
-   return final
+
+        const final: unknown = await res.json()
+        return normalizeWishlistResponse(final)
+    } catch {
+        return emptyWishlistResponse
+    }
 }

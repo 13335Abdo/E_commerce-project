@@ -23,6 +23,8 @@ export type {
   DesidnMatBeOneUseProps,
 } from "./components";
 export type { FinalContextValue } from "./context";
+export type { WishlistResponse } from "./wishlist";
+export { emptyWishlistResponse, normalizeWishlistResponse } from "./wishlist";
 export type {
   UserOrder,
   OrderLineItem,

@@ -8,6 +8,7 @@ import MySessionProvider from "./_providers/MySessionProvider";
 import Ncontext from "./_contexts/Ncontext";
 import DisplayProdectApi from "./shop/DisplayProdectApi";
 import CallGetLoggedUserWishlistApi from "@/CallAPIs/CallGetLoggedUserWishlistApi";
+import { emptyAddToCartResponse, emptyWishlistResponse } from "@/types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const userCart =await DisplayProdectApi()
-  const userWishlist = await CallGetLoggedUserWishlistApi()
-  console.log("userWishlist",userWishlist);
+  const [userCart, userWishlist] = await Promise.all([
+    DisplayProdectApi().catch(() => emptyAddToCartResponse),
+    CallGetLoggedUserWishlistApi().catch(() => emptyWishlistResponse),
+  ]);
   
   return (
     <html
