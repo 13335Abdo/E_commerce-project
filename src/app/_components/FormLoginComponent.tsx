@@ -46,7 +46,11 @@ export default function FormLoginComponent() {
     async function handlesubmit(values: LoginFormValues) {
         setisloading(true)
 
-        const responseSignin = await signIn("credentials", { redirect: false, ...values })
+        const responseSignin = await signIn("credentials", {
+            redirect: false,
+            callbackUrl: "/home",
+            ...values,
+        })
 
         if (responseSignin?.ok) {
             toast.success("login has been created.", {
@@ -54,10 +58,10 @@ export default function FormLoginComponent() {
                 richColors: true
 
             })
-            router.push("/")
+            router.push(responseSignin.url ?? "/home")
             setisloading(false)
         } else {
-            toast.error("unexpected erorr", {
+            toast.error(responseSignin?.error ?? "Unexpected error", {
                 position: "top-center",
                 richColors: true
             })

@@ -11,8 +11,7 @@ export default async function proxy(req:NextRequest) {
 
 
    if (jwt==null) {
-
-    return NextResponse.redirect("http://localhost:3000/signin")
+    return NextResponse.redirect(new URL("/signin", req.url))
    }
 
 
