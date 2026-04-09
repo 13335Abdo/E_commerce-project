@@ -66,6 +66,8 @@ export const nextAuth : NextAuthOptions = {
             (typeof token.id === "string" ? token.id : undefined) ??
             token.sub ??
             "";
+          session.user.token =
+            typeof token.tokenFromApi === "string" ? token.tokenFromApi : undefined;
         }
         return session;
       },

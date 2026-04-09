@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export default async function proxy(req:NextRequest) {
 
-   const jwt = await getToken({req})
+   const jwt = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
    
 
    
